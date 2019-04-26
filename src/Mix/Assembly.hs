@@ -1,4 +1,4 @@
-module Mix.Machine where
+module Mix.Assembly where
 
 import Data.Array
 import Data.String.Interpolate
@@ -9,15 +9,12 @@ import qualified Data.Char as Char (isSpace)
 import Mix.Model
 
 
-newMix :: Mix
-newMix = Mix {
-    rA = newCell,
-    rX = newCell,
-    memory = newMemory
-  }
-  where
-    -- Mix computers have 4000 words of memory.
-    newMemory   = array (1, 4000) []
+isComment :: String -> Bool
+isComment = Text.isPrefixOf "*" . Text.strip . Text.pack
+
+
+isBlank :: String -> Bool
+isBlank = all Char.isSpace
 
 
 -- Returns a pair containing the opcode and the register it affects
@@ -41,11 +38,3 @@ parseInstruction line
   where
     opcode                = head (words line)
     parseAddress operand  = read (head $ Split.splitOn "," operand) :: Int
-
-
-isComment :: String -> Bool
-isComment = Text.isPrefixOf "*" . Text.strip . Text.pack
-
-
-isBlank :: String -> Bool
-isBlank = all Char.isSpace

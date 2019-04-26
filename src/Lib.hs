@@ -3,13 +3,11 @@ module Lib
     ) where
 
 import System.IO
-import Data.Array
 import Data.String.Interpolate
-import qualified Data.Word as DW hiding (Word)
-import qualified Data.Text as Text
 
-import Mix.Machine
+import Mix.Assembly
 import Mix.Model
+import Mix.Op
 
 
 executeMix :: String -> IO ()
@@ -40,21 +38,3 @@ executeOp mix Instruction{op, target, address}
     | otherwise   = mix -- TODO make this an Either
 
 executeOp mix _   = mix
-
-
-loadRegister :: Mix -> String -> Int -> Mix
-loadRegister mix target address = Mix {
-    rA     = memory mix ! address
-
-  , rX     = rX mix
-  , memory = memory mix
-}
-
-
-storeRegister :: Mix -> String -> Int -> Mix
-storeRegister mix target address = Mix {
-    rA     = rA mix
-  , rX     = rX mix
-
-  , memory = memory mix // [(address, rA mix)]
-}

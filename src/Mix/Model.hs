@@ -70,3 +70,15 @@ data Instruction = Comment | Blank | Instruction {
 -- Constructs a blank cell suitable for use in registers or main memory.
 newCell :: Cell
 newCell = Cell { sign = Plus, bits = Prelude.replicate 5 0 }
+
+
+-- Constructs a blank Mix computer.
+newMix :: Mix
+newMix = Mix {
+    rA = newCell,
+    rX = newCell,
+    memory = newMemory
+  }
+  where
+    -- Mix computers have 4000 words of memory.
+    newMemory   = array (1, 4000) []
