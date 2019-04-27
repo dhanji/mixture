@@ -7,7 +7,7 @@ import qualified Data.Text as Text
 import qualified Data.List.Split as Split
 
 
-type Byte = Int
+type Bit = Int
 
 
 data Sign = Plus | Minus
@@ -17,16 +17,19 @@ instance Show Sign where
   show Minus  = "-"
 
 
--- In this case a MIX word is basically the structure of a register.
+-- a MIX cell is basically a memory location (including a register)
 data Cell = Cell {
     sign  :: Sign
-  , bits  :: [Byte]
+
+    -- bits in MIX are not well-defined,
+    -- in our case we treat it as Int <10
+  , bits  :: [Bit]
 }
 
 instance Show Cell where
-  show word = [i|#{sign word}#{toBitString "" $ bits word}|]
+  show cell = [i|#{sign cell}#{toBitString "" $ bits cell}|]
     where
-      toBitString :: String -> [Byte] -> String
+      toBitString :: String -> [Bit] -> String
       toBitString string []       = string
       toBitString string (b:bs)   = toBitString (string ++ (show b)) bs
 
@@ -61,7 +64,7 @@ data Instruction = Comment | Blank | Instruction {
 
   , address :: Int
 
-  -- The index and field specifications I and F as per MIX code.
+  -- The index and field specifications I and F as per MIX assembly.
   , iSpec   :: Int
   , fSpec   :: FieldSpec
 }
@@ -77,8 +80,6 @@ newMix :: Mix
 newMix = Mix {
     rA = newCell,
     rX = newCell,
-    memory = newMemory
-  }
-  where
     -- Mix computers have 4000 words of memory.
-    newMemory   = array (1, 4000) []
+    memory = array (1, 4000) []
+  }

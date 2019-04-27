@@ -5,18 +5,12 @@ import Data.Array
 
 
 loadRegister :: Mix -> String -> Int -> Mix
-loadRegister mix target address = Mix {
-    rA     = memory mix ! address
-
-  , rX     = rX mix
-  , memory = memory mix
+loadRegister mix target address = mix {
+  rA     = memory mix ! address
 }
 
 
 storeRegister :: Mix -> String -> Int -> Mix
-storeRegister mix target address = Mix {
-    rA     = rA mix
-  , rX     = rX mix
-
-  , memory = memory mix // [(address, rA mix)]
+storeRegister mix target address = mix {
+  memory = memory mix // [(address, rA mix)]
 }
