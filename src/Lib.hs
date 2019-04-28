@@ -28,13 +28,14 @@ executeProgram mix code = show $ executeLine mix (lines code)
 -- executes each line of the mix program, passing the output as a new computer to the next
 executeLine :: Mix -> [String] -> Mix
 executeLine mix []      = mix
-executeLine mix (l:ls)  = executeLine (executeOp mix $ parseInstruction l) ls
+executeLine mix (l:ls)  = executeLine (executeOp mix $ parseLine l) ls
 
 
 executeOp :: Mix -> Instruction -> Mix
 executeOp mix Instruction{op, target, address}
     | op == Load  = loadRegister mix target address
     | op == Store = storeRegister mix target address
+    | op == Zero  = storeZero mix address
     | otherwise   = mix -- TODO make this an Either
 
 executeOp mix _   = mix

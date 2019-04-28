@@ -1,4 +1,6 @@
-module Mix.Assembly where
+module Mix.Assembly
+    ( parseLine
+    ) where
 
 import Data.Array
 import Data.String.Interpolate
@@ -17,24 +19,25 @@ isBlank :: String -> Bool
 isBlank = all Char.isSpace
 
 
--- Returns a pair containing the opcode and the register it affects
-parseOp :: String -> (Op, String)
-parseOp ('L':'D':cs)  = (Load, cs)
-parseOp ('S':'T':cs)  = (Store, cs)
+-- Returns a pair containing the opcode and the register it affects (if any).
+parseOp :: String -> (Op, Maybe String)
+parseOp ('L':'D':cs)      = (Load, Just cs)
+parseOp ('S':'T':'Z':cs)  = (Zero, Nothing)
+parseOp ('S':'T':cs)      = (Store, Just cs)
+parseOp ('A':'D':'D':cs)  = (Add, Nothing)
 
 
-parseInstruction :: String -> Instruction
-parseInstruction line
+parseLine :: String -> Instruction
+parseLine line
     | isComment line  = Comment
     | isBlank line    = Blank
     | otherwise       = Instruction {
-    op      = fst $ parseOp opcode
-  , target  = snd $ parseOp opcode
-
-  , address = parseAddress (words line !! 1)
-  , iSpec   = 0
-  , fSpec   = FieldSpec 0 5
-}
+        op      = fst $ parseOp opcode
+      , target  = snd $ parseOp opcode
+      , address = parseAddress (words line !! 1)
+      , iSpec   = 0
+      , fSpec   = FieldSpec 0 5
+    }
   where
     opcode                = head (words line)
     parseAddress operand  = read (head $ Split.splitOn "," operand) :: Int

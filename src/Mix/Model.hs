@@ -54,14 +54,13 @@ register A: #{show $ rA mix}
 register X: #{show $ rX mix}
 |]
 
-data Op = Load | Store deriving (Eq)
+data Op = Load | Store | Zero | Add deriving (Eq)
 
 
 data Instruction = Comment | Blank | Instruction {
     op      :: Op
-  -- the target register, i.e. A1-5 or X1-5
-  , target  :: String
-
+  -- the target register (if any), i.e. A1-5 or X1-5
+  , target  :: Maybe String
   , address :: Int
 
   -- The index and field specifications I and F as per MIX assembly.
