@@ -1,4 +1,4 @@
-module Lib
+module Mix
     ( executeMix
     ) where
 

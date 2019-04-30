@@ -1,7 +1,7 @@
 module Main where
 
 import Text.RawString.QQ
-import Lib
+import Mix
 
 banner = [r|
                   .__          __
