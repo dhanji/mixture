@@ -25,6 +25,7 @@ dependencies:
 - array
 - split
 - interpolate
+- regex-posix
 
 library:
   source-dirs: src

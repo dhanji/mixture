@@ -4,11 +4,19 @@ module Mix.Assembly
 
 import Data.Array
 import Data.String.Interpolate
+import Text.Regex.Posix ((=~))
+
 import qualified Data.List.Split as Split
 import qualified Data.Text as Text
 import qualified Data.Char as Char (isSpace)
 
 import Mix.Model
+
+import Debug.Trace (trace) -- TODO delete
+
+-- OP ADDRESS,I(F) => OP ADDRESS I (Fl:Fh)
+asmPattern :: String
+asmPattern = "[[:space:]]*([[:alnum:]]+)[[:space:]]+([[:digit:]]+)([,][[:digit:]])?([(][[:digit:]][:][[:digit:]][)])?"
 
 
 isComment :: String -> Bool
@@ -25,6 +33,7 @@ parseOp ('L':'D':cs)      = (Load, Just cs)
 parseOp ('S':'T':'Z':cs)  = (Zero, Nothing)
 parseOp ('S':'T':cs)      = (Store, Just cs)
 parseOp ('A':'D':'D':cs)  = (Add, Nothing)
+parseOp x                 = trace ("error: " ++ x) (Add, Nothing)
 
 
 parseLine :: String -> Instruction
@@ -32,12 +41,14 @@ parseLine line
     | isComment line  = Comment
     | isBlank line    = Blank
     | otherwise       = Instruction {
-        op      = fst $ parseOp opcode
-      , target  = snd $ parseOp opcode
-      , address = parseAddress (words line !! 1)
-      , iSpec   = 0
-      , fSpec   = FieldSpec 0 5
+        op      = fst $ parseOp $ operands !! 1
+      , target  = snd $ parseOp $ operands !! 1
+      , address = operandAt 2 -1
+      , iSpec   = operandAt 3 0
+      , fSpec   = operandAt 4 (FieldSpec 0 5)
     }
   where
-    opcode                = head (words line)
-    parseAddress operand  = read (head $ Split.splitOn "," operand) :: Int
+    operands                = head (line =~ asmPattern :: [[String]])
+    operandAt i def
+      | length operands > i = read (operands !! i)
+      | otherwise           = def

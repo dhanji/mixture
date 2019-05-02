@@ -22,7 +22,7 @@ executeMix mixFile = do
 
 -- Runs a MIX program and returns the MIX computer's final state.
 executeProgram :: Mix -> String -> String
-executeProgram mix code = show $ executeLine mix (lines code)
+executeProgram mix code = show $ executeLine (mix{ source = lines code }) (lines code)
 
 
 -- executes each line of the mix program, passing the output as a new computer to the next

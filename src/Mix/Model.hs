@@ -2,6 +2,7 @@ module Mix.Model where
 
 import System.IO
 import Data.Array
+import Data.Char
 import Data.String.Interpolate
 import qualified Data.Text as Text
 import qualified Data.List.Split as Split
@@ -37,13 +38,24 @@ instance Show Cell where
 -- A range specified over a Word.
 data FieldSpec = FieldSpec Int Int
 
+instance Read FieldSpec where
+  readsPrec _ ('(':l:':':h:")") =
+    let low = ord l - ord '0'
+        hi  = ord h - ord '0' in
+      [(FieldSpec low hi, "")]
+
+-- Purely for symmetry with the Read instance
+instance Show FieldSpec where
+  show (FieldSpec low hi)  = [i|(#{low}:#{hi})|]
+
 
 data Mix = Mix {
   -- registers
     rA :: Cell
   , rX :: Cell
 
-  , memory :: Array Int Cell
+  , memory  :: Array Int Cell
+  , source :: [String]
 }
 
 instance Show Mix where
@@ -52,7 +64,10 @@ Final MIX Machine state:
 
 register A: #{show $ rA mix}
 register X: #{show $ rX mix}
-|]
+
+program:
+|] ++ (foldl (++) "" [line ++ "\n" | line <- source mix])
+
 
 data Op = Load | Store | Zero | Add deriving (Eq)
 
@@ -80,5 +95,6 @@ newMix = Mix {
     rA = newCell,
     rX = newCell,
     -- Mix computers have 4000 words of memory.
-    memory = array (1, 4000) []
+    memory = array (1, 4000) [],
+    source = []
   }

@@ -39,5 +39,7 @@
     <orderEntry type="library" name="safe-0.3.17" level="project" />
     <orderEntry type="library" name="th-expand-syns-0.4.4.0" level="project" />
     <orderEntry type="library" name="primitive-0.6.4.0" level="project" />
+    <orderEntry type="library" name="regex-posix-0.95.2" level="project" />
+    <orderEntry type="library" name="regex-base-0.93.2" level="project" />
   </component>
 </module>
