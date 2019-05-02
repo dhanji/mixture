@@ -92,9 +92,9 @@ newCell = Cell { sign = Plus, bits = Prelude.replicate 5 0 }
 -- Constructs a blank Mix computer.
 newMix :: Mix
 newMix = Mix {
-    rA = newCell,
-    rX = newCell,
+    rA = newCell
+  , rX = newCell
     -- Mix computers have 4000 words of memory.
-    memory = array (1, 4000) [],
-    source = []
+  , memory = array (1, 4000) []
+  , source = []
   }
