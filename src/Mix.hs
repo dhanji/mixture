@@ -28,7 +28,10 @@ executeProgram mix code = show $ executeLine (mix{ source = lines code }) (lines
 -- executes each line of the mix program, passing the output as a new computer to the next
 executeLine :: Mix -> [String] -> Mix
 executeLine mix []      = mix
-executeLine mix (l:ls)  = executeLine (executeOp mix $ parseLine l) ls
+executeLine mix (l:ls)  = case parseLine l of
+    Blank       -> executeLine mix ls
+    Comment     -> executeLine mix ls
+    instruction -> executeLine (executeOp mix instruction) ls
 
 
 executeOp :: Mix -> Instruction -> Mix
@@ -37,5 +40,3 @@ executeOp mix instruction
     | op instruction == Store = storeRegister mix instruction
     | op instruction == Zero  = storeZero mix instruction
     | otherwise               = mix -- TODO make this an Either
-
-executeOp mix _   = mix

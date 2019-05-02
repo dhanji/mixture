@@ -12,7 +12,6 @@ import qualified Data.Char as Char (isSpace)
 
 import Mix.Model
 
-import Debug.Trace (trace) -- TODO delete
 
 -- OP ADDRESS,I(F) => OP ADDRESS I (Fl:Fh)
 asmPattern :: String

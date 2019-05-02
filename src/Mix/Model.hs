@@ -20,19 +20,21 @@ instance Show Sign where
 
 -- a MIX cell is basically a memory location (including a register)
 data Cell = Cell {
-    sign  :: Sign
-
-    -- bits in MIX are not well-defined,
-    -- in our case we treat it as Int <10
-  , bits  :: [Bit]
+  -- bits in MIX are not well-defined,
+  -- in our case we treat it as Int <10
+  -- The first bit is always the sign bit
+  bits  :: [Bit]
 }
 
 instance Show Cell where
-  show cell = [i|#{sign cell}#{toBitString "" $ bits cell}|]
+  show cell = [i|#{sign (bits cell !! 0)}#{toBitString "" $ bits cell}|]
     where
       toBitString :: String -> [Bit] -> String
       toBitString string []       = string
       toBitString string (b:bs)   = toBitString (string ++ (show b)) bs
+      sign :: Bit -> String
+      sign 0  = "+"
+      sign _  = "-"
 
 
 -- A range specified over a Word.
@@ -86,7 +88,7 @@ data Instruction = Comment | Blank | Instruction {
 
 -- Constructs a blank cell suitable for use in registers or main memory.
 newCell :: Cell
-newCell = Cell { sign = Plus, bits = Prelude.replicate 5 0 }
+newCell = Cell { bits = Prelude.replicate 6 0 }
 
 
 -- Constructs a blank Mix computer.

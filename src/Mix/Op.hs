@@ -8,10 +8,15 @@ import Mix.Model
 import Data.Array
 
 
+-- Reads a memory location, honoring the I- and F- spec given.
+readMemory :: Mix -> Instruction -> Cell
+readMemory mix Instruction{target, address, fSpec} = memory mix ! address
+
+
 -- LD{A,X}
 loadRegister :: Mix -> Instruction -> Mix
 loadRegister mix instruction = mix {
-  rA     = memory mix ! (address instruction)
+  rA     = readMemory mix instruction
 }
 
 
