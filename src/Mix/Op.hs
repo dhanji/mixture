@@ -1,25 +1,29 @@
-module Mix.Op where
+module Mix.Op
+    ( loadRegister
+    , storeRegister
+    , storeZero
+    ) where
 
 import Mix.Model
 import Data.Array
 
 
 -- LD{A,X}
-loadRegister :: Mix -> Maybe String -> Int -> Mix
-loadRegister mix target address = mix {
-  rA     = memory mix ! address
+loadRegister :: Mix -> Instruction -> Mix
+loadRegister mix instruction = mix {
+  rA     = memory mix ! (address instruction)
 }
 
 
 -- ST{A,X}
-storeRegister :: Mix -> Maybe String -> Int -> Mix
-storeRegister mix target address = mix {
-  memory = memory mix // [(address, rA mix)]
+storeRegister :: Mix -> Instruction -> Mix
+storeRegister mix instruction = mix {
+  memory = memory mix // [((address instruction), rA mix)]
 }
 
 
 -- STZ
-storeZero :: Mix -> Int -> Mix
-storeZero mix address = mix {
-  memory = memory mix // [(address, newCell)]
+storeZero :: Mix -> Instruction -> Mix
+storeZero mix instruction = mix {
+  memory = memory mix // [((address instruction), newCell)]
 }

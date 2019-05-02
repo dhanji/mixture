@@ -32,10 +32,10 @@ executeLine mix (l:ls)  = executeLine (executeOp mix $ parseLine l) ls
 
 
 executeOp :: Mix -> Instruction -> Mix
-executeOp mix Instruction{op, target, address}
-    | op == Load  = loadRegister mix target address
-    | op == Store = storeRegister mix target address
-    | op == Zero  = storeZero mix address
-    | otherwise   = mix -- TODO make this an Either
+executeOp mix instruction
+    | op instruction == Load  = loadRegister mix instruction
+    | op instruction == Store = storeRegister mix instruction
+    | op instruction == Zero  = storeZero mix instruction
+    | otherwise               = mix -- TODO make this an Either
 
 executeOp mix _   = mix

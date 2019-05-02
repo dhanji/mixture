@@ -1,0 +1,18 @@
+TODO
+----
+
+- f-spec read & copy
+- i-registers
+- Working i-spec
+- Implement Arithmetic operations (MUL, DIV etc)
+- Make mix file an argument
+- Write a numerical algorithm in Mix
+- j-registers
+- Either on parse failure
+- rich parse error messages
+- memory / register cell diagram
+- ALU flow diagram?
+- other operations
+- parsec for parsing
+
+- language that emits MIX assembly (scheme? other C-like lang?)
