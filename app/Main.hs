@@ -15,7 +15,8 @@ banner = [r|
           |__|_|  /__/__/\_ \ |__| |____/ |__|    \___  >
                 \/         \/                         \/   1.0
 
-          a MIX computer in λaskell |]
+          a MIX computer in λaskell
+|]
 
 
 main :: IO ()
@@ -25,7 +26,7 @@ main = do
 
     case parse args of
       Just file   -> executeMix file
-      Nothing     -> putStrLn "\nusage: mixture <file.mix>"
+      Nothing     -> putStrLn "usage: mixture <file.mix>"
 
 
 parse :: [String] -> Maybe String
