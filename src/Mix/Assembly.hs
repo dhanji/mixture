@@ -32,6 +32,7 @@ parseOp ('L':'D':cs)      = (Load, Just cs)
 parseOp ('S':'T':'Z':cs)  = (Zero, Nothing)
 parseOp ('S':'T':cs)      = (Store, Just cs)
 parseOp ('I':'N':'C':cs)  = (Increment, Just cs)
+parseOp ('S':'E':'T':cs)  = (Set, Just cs)
 parseOp x                 = fail ("Parse error: " ++ x) (Zero, Nothing) -- TODO don't fail!
 
 

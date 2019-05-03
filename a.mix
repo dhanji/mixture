@@ -1,4 +1,6 @@
 * A MIX assembly program
 
+  SETA    67890
   STA     2001
-  LDA     2001(0:5)
+  SETA    0
+  LDA     2001(1:2)

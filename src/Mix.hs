@@ -36,6 +36,7 @@ executeLine mix (l:ls)  = case parseLine l of
 
 executeOp :: Mix -> Instruction -> Mix
 executeOp mix instruction
+    | op instruction == Set   = setRegister mix instruction
     | op instruction == Load  = loadRegister mix instruction
     | op instruction == Store = storeRegister mix instruction
     | op instruction == Zero  = storeZero mix instruction

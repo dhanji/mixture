@@ -8,7 +8,7 @@ import qualified Data.Text as Text
 import qualified Data.List.Split as Split
 
 
-type Bit = Int
+type Byte = Int
 
 
 data Sign = Plus | Minus
@@ -23,16 +23,16 @@ data Cell = Cell {
   -- bits in MIX are not well-defined,
   -- in our case we treat it as Int <10
   -- The first bit is always the sign bit
-  bits  :: [Bit]
+  bytes  :: [Byte]
 }
 
 instance Show Cell where
-  show cell = [i|#{sign (bits cell !! 0)}#{toBitString "" $ bits cell}|]
+  show cell = [i|#{sign (bytes cell !! 0)}#{toBitString "" $ bytes cell}|]
     where
-      toBitString :: String -> [Bit] -> String
+      toBitString :: String -> [Byte] -> String
       toBitString string []       = string
       toBitString string (b:bs)   = toBitString (string ++ (show b)) bs
-      sign :: Bit -> String
+      sign :: Byte -> String
       sign 0  = "+"
       sign _  = "-"
 
@@ -45,6 +45,7 @@ instance Read FieldSpec where
     let low = ord l - ord '0'
         hi  = ord h - ord '0' in
       [(FieldSpec low hi, "")]
+  readsPrec _ _                 = [(FieldSpec 0 5, "")]
 
 -- Purely for symmetry with the Read instance
 instance Show FieldSpec where
@@ -71,7 +72,7 @@ program:
 |] ++ (foldl (++) "" [line ++ "\n" | line <- source mix])
 
 
-data Op = Load | Store | Zero | Increment deriving (Eq)
+data Op = Load | Store | Zero | Increment | Set deriving (Eq)
 
 
 data Instruction = Comment | Blank | Instruction {
@@ -88,7 +89,7 @@ data Instruction = Comment | Blank | Instruction {
 
 -- Constructs a blank cell suitable for use in registers or main memory.
 newCell :: Cell
-newCell = Cell { bits = Prelude.replicate 6 0 }
+newCell = Cell { bytes = replicate 6 0 }
 
 
 -- Constructs a blank Mix computer.
@@ -97,7 +98,7 @@ newMix = Mix {
     rA = newCell
   , rX = newCell
     -- Mix computers have 4000 words of memory.
-  , memory = array (1, 4000) []
+  , memory = array (1, 4000) [(i, newCell)| i <- [1..4000]]
   , source = []
   }
 
@@ -107,11 +108,18 @@ newMix = Mix {
 -- any bits of target that are not covered by the F-spec
 -- are "preserved" intact in the result.
 copyCell :: FieldSpec -> Cell -> Cell -> Cell
-copyCell (FieldSpec from to) Cell{bits=source} Cell{bits=target} = Cell {
-  bits = sign : pad ++ slice source
+copyCell (FieldSpec from to) Cell{bytes=source} Cell{bytes=target} = Cell {
+  bytes = pad ++ slice
 }
   where
-    slice             = take (to + 1 - from) . drop from
-    pad               = take from target
-    sign | from == 0  = head source
-         | otherwise  = head target
+    slice = take (to + 1 - from) $ drop from source
+    pad   = take (6 - length slice) target
+
+
+-- Converts an Int to a 6-word Byte string suitable for use in a cell.
+toBytes :: Int -> [Byte]
+toBytes i | i == 0    = replicate 6 0
+          | i > 0     = bytize i
+          | otherwise = 1:(bytize $ abs i)
+  where
+    bytize i = [(i `mod` 10^n) `div` 10^(n - 1) | n <- [6,5..1]]

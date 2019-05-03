@@ -1,11 +1,19 @@
 module Mix.Op
     ( loadRegister
+    , setRegister
     , storeRegister
     , storeZero
     ) where
 
 import Mix.Model
 import Data.Array
+
+
+-- Made up instruction for testing only.
+setRegister :: Mix -> Instruction -> Mix
+setRegister mix Instruction{address} = mix {
+  rA = Cell { bytes = toBytes address }
+}
 
 
 -- LD{A,X}: Loading always zeroes out the register.
