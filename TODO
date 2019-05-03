@@ -5,7 +5,7 @@ TODO
 - i-registers
 - Working i-spec
 - Implement Arithmetic operations (MUL, DIV etc)
-- Make mix file an argument
+x Make mix file an argument
 - Write a numerical algorithm in Mix
 - j-registers
 - Either on parse failure
@@ -15,4 +15,4 @@ TODO
 - other operations
 - parsec for parsing
 
-- language that emits MIX assembly (scheme? other C-like lang?)
+- language that emits MIX assembly (scheme? other C-like lang? prolog?)

@@ -8,27 +8,22 @@ import Mix.Model
 import Data.Array
 
 
--- Reads a memory location, honoring the I- and F- spec given.
-readMemory :: Mix -> Instruction -> Cell
-readMemory mix Instruction{target, address, fSpec} = memory mix ! address
-
-
--- LD{A,X}
+-- LD{A,X}: Loading always zeroes out the register.
 loadRegister :: Mix -> Instruction -> Mix
-loadRegister mix instruction = mix {
-  rA     = readMemory mix instruction
+loadRegister mix Instruction{address, fSpec} = mix {
+  rA = copyCell fSpec (memory mix ! address) newCell
 }
 
 
 -- ST{A,X}
 storeRegister :: Mix -> Instruction -> Mix
-storeRegister mix instruction = mix {
-  memory = memory mix // [((address instruction), rA mix)]
+storeRegister mix Instruction{address, fSpec} = mix {
+  memory = memory mix // [(address, copyCell fSpec (rA mix) (memory mix ! address))]
 }
 
 
 -- STZ
 storeZero :: Mix -> Instruction -> Mix
-storeZero mix instruction = mix {
-  memory = memory mix // [((address instruction), newCell)]
+storeZero mix Instruction{address, fSpec} = mix {
+  memory = memory mix // [(address, copyCell fSpec newCell (memory mix ! address))]
 }

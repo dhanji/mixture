@@ -1,4 +1,4 @@
 * A MIX assembly program
 
   STA     2001
-  LDA     2001
+  LDA     2001(0:5)

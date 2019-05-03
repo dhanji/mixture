@@ -71,7 +71,7 @@ program:
 |] ++ (foldl (++) "" [line ++ "\n" | line <- source mix])
 
 
-data Op = Load | Store | Zero | Add deriving (Eq)
+data Op = Load | Store | Zero | Increment deriving (Eq)
 
 
 data Instruction = Comment | Blank | Instruction {
@@ -100,3 +100,18 @@ newMix = Mix {
   , memory = array (1, 4000) []
   , source = []
   }
+
+
+-- Returns a slice of the given bitstring according to the FieldSpec
+-- Contents of source are copied to a new cell such that
+-- any bits of target that are not covered by the F-spec
+-- are "preserved" intact in the result.
+copyCell :: FieldSpec -> Cell -> Cell -> Cell
+copyCell (FieldSpec from to) Cell{bits=source} Cell{bits=target} = Cell {
+  bits = sign : pad ++ slice source
+}
+  where
+    slice             = take (to + 1 - from) . drop from
+    pad               = take from target
+    sign | from == 0  = head source
+         | otherwise  = head target

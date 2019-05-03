@@ -31,8 +31,8 @@ parseOp :: String -> (Op, Maybe String)
 parseOp ('L':'D':cs)      = (Load, Just cs)
 parseOp ('S':'T':'Z':cs)  = (Zero, Nothing)
 parseOp ('S':'T':cs)      = (Store, Just cs)
-parseOp ('A':'D':'D':cs)  = (Add, Nothing)
-parseOp x                 = fail ("Parse error: " ++ x) (Add, Nothing) -- TODO don't fail!
+parseOp ('I':'N':'C':cs)  = (Increment, Just cs)
+parseOp x                 = fail ("Parse error: " ++ x) (Zero, Nothing) -- TODO don't fail!
 
 
 parseLine :: String -> Instruction
