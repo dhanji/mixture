@@ -24,10 +24,10 @@ main = do
     args <- getArgs
 
     case parse args of
-      Left msg    -> putStrLn msg
-      Right file  -> executeMix file
+      Just file   -> executeMix file
+      Nothing     -> putStrLn "\nusage: mixture <file.mix>"
 
 
-parse :: [String] -> Either String String
-parse [arg] = Right arg
-parse _     = Left "\nusage: mixture <file.mix>"
+parse :: [String] -> Maybe String
+parse [arg] = Just arg
+parse _     = Nothing
