@@ -1,7 +1,7 @@
 TODO
 ----
 
-- f-spec read & copy
+x f-spec read & copy
 - i-registers
 - Working i-spec
 - Implement Arithmetic operations (MUL, DIV etc)

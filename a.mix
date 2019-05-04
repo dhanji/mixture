@@ -3,4 +3,5 @@
   SETA    67890
   STA     2001
   SETA    0
+  SETX    4040
   LDA     2001(1:2)

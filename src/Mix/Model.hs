@@ -56,19 +56,27 @@ data Mix = Mix {
   -- registers
     rA :: Cell
   , rX :: Cell
+  , rJ :: Cell
+  , rI :: [Cell]
 
-  , memory  :: Array Int Cell
-  , source :: [String]
+  , memory      :: Array Int Cell
+  , source      :: [String]
 }
 
 instance Show Mix where
   show mix = [i|
-Final MIX Machine state:
 
-register A: #{show $ rA mix}
-register X: #{show $ rX mix}
+      register A              register X
+      #{show $ rA mix}                 #{show $ rX mix}
 
-program:
+  I registers:
+  #{map show (rI mix)}
+
+  register J:
+  #{show $ rJ mix}
+
+
+assembly:
 |] ++ (foldl (++) "" [line ++ "\n" | line <- source mix])
 
 
@@ -97,9 +105,11 @@ newMix :: Mix
 newMix = Mix {
     rA = newCell
   , rX = newCell
+  , rJ = newCell
+  , rI = replicate 6 newCell
     -- Mix computers have 4000 words of memory.
-  , memory = array (1, 4000) [(i, newCell)| i <- [1..4000]]
-  , source = []
+  , memory      = array (1, 4000) [(i, newCell)| i <- [1..4000]]
+  , source      = []
   }
 
 
@@ -123,3 +133,25 @@ toBytes i | i == 0    = replicate 6 0
           | otherwise = 1:(bytize $ abs i)
   where
     bytize i = [(i `mod` 10^n) `div` 10^(n - 1) | n <- [6,5..1]]
+
+
+-- Destructively sets the value of a register to the given cell.
+set :: Mix -> Maybe String -> Cell -> Mix
+set mix Nothing _       = mix
+set mix (Just reg) cell = case reg of
+    "A"      -> mix { rA = cell }
+    "X"      -> mix { rX = cell }
+    "J"      -> mix { rJ = cell }
+    ('I':i)  -> let ix = read i in mix { rI = replace ix }
+  where
+    replace ix = [if j == ix then cell else v | j <- [1..6], v <- rI mix]
+
+
+-- Returns the value of the register identified by the given String
+get :: Mix -> Maybe String -> Cell
+get mix Nothing    = newCell
+get mix (Just reg) = case reg of
+    "A"      -> rA mix
+    "X"      -> rX mix
+    "J"      -> rJ mix
+    ('I':i)  -> rI mix !! (read i - 1)

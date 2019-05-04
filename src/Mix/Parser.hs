@@ -1,4 +1,4 @@
-module Mix.Assembly
+module Mix.Parser
     ( parseLine
     ) where
 
