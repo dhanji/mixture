@@ -6,7 +6,7 @@ import System.IO
 import Data.String.Interpolate
 
 import Mix.Parser
-import Mix.Model
+import Mix.Data
 import Mix.Op
 
 

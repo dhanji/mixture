@@ -5,7 +5,8 @@ module Mix.Op
   , storeZero
   ) where
 
-import Mix.Model
+import Mix.Data
+import Mix.Data.Cell
 import Data.Array
 
 
@@ -20,6 +21,13 @@ setRegister mix Instruction{address, target, sign} = set mix target Cell {
 -- LD{A,X}: Loading always zeroes out the register.
 loadRegister :: Mix -> Instruction -> Mix
 loadRegister mix Instruction{address, target, fSpec} = set mix target value
+  where
+    value = rightCopy fSpec (memory mix ! address) newCell
+
+
+-- ADD: Loading always zeroes out the register.
+add :: Mix -> Instruction -> Mix
+add mix Instruction{address, target, fSpec} = set mix target value
   where
     value = rightCopy fSpec (memory mix ! address) newCell
 

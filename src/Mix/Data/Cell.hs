@@ -1,104 +1,7 @@
-module Mix.Model where
+module Mix.Data.Cell where
 
-import System.IO
 import Data.Array
-import Data.Char
-import Data.String.Interpolate
-import qualified Data.Text as Text
-import qualified Data.List.Split as Split
-
-
-type Byte = Int
-
-
--- constants.
-cellWidth :: Int
-cellWidth = 5
-
-
-data Sign = Plus | Minus
-
-instance Show Sign where
-  show Plus   = "+"
-  show Minus  = "-"
-
-instance Read Sign where
-  readsPrec _ "-" = [(Minus, "")]
-  readsPrec _ _   = [(Plus, "")]
-
-
--- a MIX cell is basically a memory location (including a register)
-data Cell = Cell {
-    sign   :: Sign
-  -- bits in MIX are not well-defined,
-  -- in our case we treat it as Int <10
-  -- The first bit is always the sign bit
-  , bytes  :: [Byte]
-}
-
-instance Show Cell where
-  show cell = [i|#{sign (cell :: Cell)}#{toBitString $ bytes cell}|]
-    where
-      toBitString = foldl (++) "" . map show
-
-
--- A range specified over a Word.
-data FieldSpec = FieldSpec Int Int
-
-instance Read FieldSpec where
-  readsPrec _ ('(':l:':':h:")") =
-    let low = ord l - ord '0'
-        hi  = ord h - ord '0' in
-      [(FieldSpec low hi, "")]
-  readsPrec _ _                 = [(FieldSpec 0 5, "")]
-
--- Purely for symmetry with the Read instance
-instance Show FieldSpec where
-  show (FieldSpec low hi)  = [i|(#{low}:#{hi})|]
-
-
-data Mix = Mix {
-  -- registers
-    rA :: Cell
-  , rX :: Cell
-  , rJ :: Cell
-  , rI :: [Cell]
-
-  , memory      :: Array Int Cell
-  , source      :: [String]
-}
-
-instance Show Mix where
-  show mix = [i|
-
-      register A              register X
-      #{show $ rA mix}                 #{show $ rX mix}
-
-  I registers:
-  #{map show (rI mix)}
-
-  register J:
-  #{show $ rJ mix}
-
-
-assembly:
-|] ++ (foldl (++) "" [line ++ "\n" | line <- source mix])
-
-
-data Op = Load | Store | Zero | Increment | Set deriving (Eq)
-
-
-data Instruction = Comment | Blank | Instruction {
-    op      :: Op
-  -- the target register (if any), i.e. A1-5 or X1-5
-  , target  :: Maybe String
-  , sign    :: Sign
-  , address :: Int
-
-  -- The index and field specifications I and F as per MIX assembly.
-  , iSpec   :: Int
-  , fSpec   :: FieldSpec
-}
+import Mix.Data
 
 
 -- Constructs a blank cell suitable for use in registers or main memory.
@@ -158,9 +61,10 @@ leftCopy (FieldSpec low hi) Cell{sign=ssign,bytes=sbytes} Cell{sign=tsign,bytes=
 
 -- Converts an Int to a cellWidth-word Byte string suitable for use in a cell.
 toBytes :: Int -> [Byte]
-toBytes i | i == 0    = replicate cellWidth 0
-          | i > 0     = bytize i
-          | otherwise = 1:(bytize $ abs i)
+toBytes i
+    | i == 0    = replicate cellWidth 0
+    | i > 0     = bytize i
+    | otherwise = 1: bytize (abs i)
   where
     bytize i = [(i `mod` 10^n) `div` 10^(n - 1) | n <- [cellWidth,cellWidth - 1..1]]
 

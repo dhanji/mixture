@@ -10,7 +10,8 @@ import qualified Data.List.Split as Split
 import qualified Data.Text as Text
 import qualified Data.Char as Char (isSpace)
 
-import Mix.Model
+import Mix.Data
+import Mix.Data.Display
 
 
 -- OP ADDRESS,I(F) => OP ADDRESS I (Fl:Fh)
@@ -33,6 +34,7 @@ parseOp ('S':'T':'Z':cs)  = (Zero, Nothing)
 parseOp ('S':'T':cs)      = (Store, Just cs)
 parseOp ('I':'N':'C':cs)  = (Increment, Just cs)
 parseOp ('S':'E':'T':cs)  = (Set, Just cs)
+parseOp ('A':'D':'D':cs)  = (Add, Just cs)
 parseOp x                 = fail ("Parse error: " ++ x) (Zero, Nothing) -- TODO make this an Either
 
 
