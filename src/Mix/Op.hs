@@ -11,7 +11,10 @@ import Data.Array
 
 -- Made up instruction for testing only.
 setRegister :: Mix -> Instruction -> Mix
-setRegister mix Instruction{address, target} = set mix target Cell { bytes = toBytes address }
+setRegister mix Instruction{address, target, sign} = set mix target Cell {
+    sign  = sign
+  , bytes = toBytes address
+}
 
 
 -- LD{A,X}: Loading always zeroes out the register.

@@ -15,7 +15,7 @@ import Mix.Model
 
 -- OP ADDRESS,I(F) => OP ADDRESS I (Fl:Fh)
 asmPattern :: String
-asmPattern = "[[:space:]]*([[:alnum:]]+)[[:space:]]+([[:digit:]]+)([,][[:digit:]])?([(][[:digit:]][:][[:digit:]][)])?"
+asmPattern = "[[:space:]]*([[:alnum:]]+)[[:space:]]+([-])?([[:digit:]]+)([,][[:digit:]])?([(][[:digit:]][:][[:digit:]][)])?"
 
 
 isComment :: String -> Bool
@@ -33,7 +33,7 @@ parseOp ('S':'T':'Z':cs)  = (Zero, Nothing)
 parseOp ('S':'T':cs)      = (Store, Just cs)
 parseOp ('I':'N':'C':cs)  = (Increment, Just cs)
 parseOp ('S':'E':'T':cs)  = (Set, Just cs)
-parseOp x                 = fail ("Parse error: " ++ x) (Zero, Nothing) -- TODO don't fail!
+parseOp x                 = fail ("Parse error: " ++ x) (Zero, Nothing) -- TODO make this an Either
 
 
 parseLine :: String -> Instruction
@@ -43,12 +43,13 @@ parseLine line
     | otherwise       = Instruction {
         op      = fst $ parseOp $ operands !! 1
       , target  = snd $ parseOp $ operands !! 1
-      , address = operandAt 2 -1
-      , iSpec   = operandAt 3 0
-      , fSpec   = operandAt 4 (FieldSpec 0 5)
+      , sign    = operandAt 2 Plus
+      , address = operandAt 3 -1
+      , iSpec   = operandAt 4 0
+      , fSpec   = operandAt 5 (FieldSpec 0 5)
     }
   where
     operands                = head (line =~ asmPattern :: [[String]])
     operandAt i def
-      | length operands > i = read (operands !! i)
-      | otherwise           = def
+        | length operands > i = read (operands !! i)
+        | otherwise           = def

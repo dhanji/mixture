@@ -35,9 +35,9 @@ executeLine mix (l:ls)  = case parseLine l of
 
 
 executeOp :: Mix -> Instruction -> Mix
-executeOp mix instruction
-    | op instruction == Set   = setRegister mix instruction
-    | op instruction == Load  = loadRegister mix instruction
-    | op instruction == Store = storeRegister mix instruction
-    | op instruction == Zero  = storeZero mix instruction
-    | otherwise               = mix -- TODO make this an Either
+executeOp mix instruction = case op instruction of
+    Set     -> setRegister mix instruction
+    Load    -> loadRegister mix instruction
+    Store   -> storeRegister mix instruction
+    Zero    -> storeZero mix instruction
+    _       -> mix -- TODO make this an Either

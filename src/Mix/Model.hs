@@ -11,30 +11,35 @@ import qualified Data.List.Split as Split
 type Byte = Int
 
 
+-- constants.
+cellWidth :: Int
+cellWidth = 5
+
+
 data Sign = Plus | Minus
 
 instance Show Sign where
   show Plus   = "+"
   show Minus  = "-"
 
+instance Read Sign where
+  readsPrec _ "-" = [(Minus, "")]
+  readsPrec _ _   = [(Plus, "")]
+
 
 -- a MIX cell is basically a memory location (including a register)
 data Cell = Cell {
+    sign   :: Sign
   -- bits in MIX are not well-defined,
   -- in our case we treat it as Int <10
   -- The first bit is always the sign bit
-  bytes  :: [Byte]
+  , bytes  :: [Byte]
 }
 
 instance Show Cell where
-  show cell = [i|#{sign (bytes cell !! 0)}#{toBitString "" $ bytes cell}|]
+  show cell = [i|#{sign (cell :: Cell)}#{toBitString $ bytes cell}|]
     where
-      toBitString :: String -> [Byte] -> String
-      toBitString string []       = string
-      toBitString string (b:bs)   = toBitString (string ++ (show b)) bs
-      sign :: Byte -> String
-      sign 0  = "+"
-      sign _  = "-"
+      toBitString = foldl (++) "" . map show
 
 
 -- A range specified over a Word.
@@ -87,6 +92,7 @@ data Instruction = Comment | Blank | Instruction {
     op      :: Op
   -- the target register (if any), i.e. A1-5 or X1-5
   , target  :: Maybe String
+  , sign    :: Sign
   , address :: Int
 
   -- The index and field specifications I and F as per MIX assembly.
@@ -97,7 +103,10 @@ data Instruction = Comment | Blank | Instruction {
 
 -- Constructs a blank cell suitable for use in registers or main memory.
 newCell :: Cell
-newCell = Cell { bytes = replicate 6 0 }
+newCell = Cell {
+    sign  = Plus
+  , bytes = replicate cellWidth 0
+}
 
 
 -- Constructs a blank Mix computer.
@@ -110,7 +119,7 @@ newMix = Mix {
     -- Mix computers have 4000 words of memory.
   , memory      = array (1, 4000) [(i, newCell)| i <- [1..4000]]
   , source      = []
-  }
+}
 
 
 -- Returns a slice of the given bitstring according to the FieldSpec
@@ -118,21 +127,28 @@ newMix = Mix {
 -- any bits of target that are not covered by the F-spec
 -- are "preserved" intact in the result.
 copyCell :: FieldSpec -> Cell -> Cell -> Cell
-copyCell (FieldSpec from to) Cell{bytes=source} Cell{bytes=target} = Cell {
-  bytes = pad ++ slice
+copyCell (FieldSpec from to) source target = Cell {
+    sign = signbit
+  , bytes = pad ++ slice
 }
   where
-    slice = take (to + 1 - from) $ drop from source
-    pad   = take (6 - length slice) target
+    pad             = take (cellWidth - length slice) (bytes target)
+    signbit
+        | from == 0 = sign (source :: Cell)
+        | otherwise = sign (target :: Cell)
+    slice
+        | to == 0   = [] -- sign bit only.
+        | from == 0 = take to $ bytes source
+        | otherwise = take (to - from + 1) $ drop (from - 1) (bytes source)
 
 
--- Converts an Int to a 6-word Byte string suitable for use in a cell.
+-- Converts an Int to a cellWidth-word Byte string suitable for use in a cell.
 toBytes :: Int -> [Byte]
-toBytes i | i == 0    = replicate 6 0
+toBytes i | i == 0    = replicate cellWidth 0
           | i > 0     = bytize i
           | otherwise = 1:(bytize $ abs i)
   where
-    bytize i = [(i `mod` 10^n) `div` 10^(n - 1) | n <- [6,5..1]]
+    bytize i = [(i `mod` 10^n) `div` 10^(n - 1) | n <- [cellWidth,cellWidth - 1..1]]
 
 
 -- Destructively sets the value of a register to the given cell.
@@ -144,7 +160,7 @@ set mix (Just reg) cell = case reg of
     "J"      -> mix { rJ = cell }
     ('I':i)  -> let ix = read i in mix { rI = replace ix }
   where
-    replace ix = [if j == ix then cell else v | j <- [1..6], v <- rI mix]
+    replace ix = [if j == ix then cell else v | j <- [1..cellWidth], v <- rI mix]
 
 
 -- Returns the value of the register identified by the given String
