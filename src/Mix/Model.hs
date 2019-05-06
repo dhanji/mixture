@@ -125,9 +125,26 @@ newMix = Mix {
 -- Returns a slice of the given bitstring according to the FieldSpec
 -- Contents of source are copied to a new cell such that
 -- any bits of target that are not covered by the F-spec
--- are "preserved" intact in the result.
-copyCell :: FieldSpec -> Cell -> Cell -> Cell
-copyCell (FieldSpec from to) source target = Cell {
+-- are "preserved" intact in the result and shifted to the right.
+copyCellRight :: FieldSpec -> Cell -> Cell -> Cell
+copyCellRight (FieldSpec low to) Cell{sign=ssign,bytes=sbytes} Cell{sign=tsign,bytes=tbytes} = Cell {
+    sign  = if | low == 0   -> ssign
+               | otherwise  -> tsign
+  , bytes = pad tbytes ++ slice sbytes
+}
+  where
+    from              = low - 1
+    pad               = take (cellWidth - length (slice sbytes))
+    slice | low == 0  = take (to - from - 1)
+          | otherwise = take (to - from) . drop from
+
+
+-- Returns a slice of the given bitstring according to the FieldSpec
+-- Contents of source are copied to a new cell such that
+-- any bits of target that are not covered by the F-spec
+-- are "preserved" intact in the result and shifted to the left.
+copyCellLeft :: FieldSpec -> Cell -> Cell -> Cell
+copyCellLeft (FieldSpec from to) source target = Cell {
     sign = signbit
   , bytes = pad ++ slice
 }

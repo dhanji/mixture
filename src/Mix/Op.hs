@@ -21,7 +21,7 @@ setRegister mix Instruction{address, target, sign} = set mix target Cell {
 loadRegister :: Mix -> Instruction -> Mix
 loadRegister mix Instruction{address, target, fSpec} = set mix target value
   where
-    value = copyCell fSpec (memory mix ! address) newCell
+    value = copyCellRight fSpec (memory mix ! address) newCell
 
 
 -- ST{A,X}
@@ -31,7 +31,7 @@ storeRegister mix Instruction{address, target, fSpec} = mix {
 }
   where
     register  = get mix target
-    value     = copyCell fSpec register (memory mix ! address)
+    value     = copyCellRight fSpec register (memory mix ! address)
 
 
 -- STZ
@@ -40,4 +40,4 @@ storeZero mix Instruction{address, fSpec} = mix {
   memory = memory mix // [(address, value)]
 }
   where
-    value = copyCell fSpec newCell (memory mix ! address)
+    value = copyCellRight fSpec newCell (memory mix ! address)
