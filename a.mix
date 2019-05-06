@@ -1,6 +1,12 @@
 * A MIX assembly program
 
-  SETA    -80354
+  SETA    -12345
   STA     2000
+  SETA    67890
+
+  * test instruction
+  STA     2000(0:1)
+
+  * display only
   SETA    0
-  LDA     2000(1:1)
+  LDA     2000

@@ -126,8 +126,8 @@ newMix = Mix {
 -- Contents of source are copied to a new cell such that
 -- any bits of target that are not covered by the F-spec
 -- are "preserved" intact in the result and shifted to the right.
-copyCellRight :: FieldSpec -> Cell -> Cell -> Cell
-copyCellRight (FieldSpec low to) Cell{sign=ssign,bytes=sbytes} Cell{sign=tsign,bytes=tbytes} = Cell {
+rightCopy :: FieldSpec -> Cell -> Cell -> Cell
+rightCopy (FieldSpec low to) Cell{sign=ssign,bytes=sbytes} Cell{sign=tsign,bytes=tbytes} = Cell {
     sign  = if | low == 0   -> ssign
                | otherwise  -> tsign
   , bytes = pad tbytes ++ slice sbytes
@@ -143,20 +143,17 @@ copyCellRight (FieldSpec low to) Cell{sign=ssign,bytes=sbytes} Cell{sign=tsign,b
 -- Contents of source are copied to a new cell such that
 -- any bits of target that are not covered by the F-spec
 -- are "preserved" intact in the result and shifted to the left.
-copyCellLeft :: FieldSpec -> Cell -> Cell -> Cell
-copyCellLeft (FieldSpec from to) source target = Cell {
-    sign = signbit
-  , bytes = pad ++ slice
+leftCopy :: FieldSpec -> Cell -> Cell -> Cell
+leftCopy (FieldSpec low hi) Cell{sign=ssign,bytes=sbytes} Cell{sign=tsign,bytes=tbytes} = Cell {
+    sign  = if | low == 0   -> ssign
+               | otherwise  -> tsign
+  , bytes = if | low == 0   -> keep hi sbytes ++ drop hi tbytes
+               | otherwise  -> take from tbytes ++ keep size sbytes ++ drop (from + size) tbytes
 }
   where
-    pad             = take (cellWidth - length slice) (bytes target)
-    signbit
-        | from == 0 = sign (source :: Cell)
-        | otherwise = sign (target :: Cell)
-    slice
-        | to == 0   = [] -- sign bit only.
-        | from == 0 = take to $ bytes source
-        | otherwise = take (to - from + 1) $ drop (from - 1) (bytes source)
+    from      = low - 1
+    size      = 1 + hi - low
+    keep n bs = drop (length bs - n) bs
 
 
 -- Converts an Int to a cellWidth-word Byte string suitable for use in a cell.
