@@ -25,7 +25,7 @@ loadRegister mix Instruction{address, target, fSpec} = set mix target value
     value = rightCopy fSpec (memory mix ! address) newCell
 
 
--- ADD: Loading always zeroes out the register.
+-- ADD: Loads from memory and adds to the A register.
 add :: Mix -> Instruction -> Mix
 add mix Instruction{address, target, fSpec} = set mix target value
   where
