@@ -2,12 +2,15 @@ TODO
 ----
 
 x f-spec read & copy
-- i-registers
+x i-registers
 - Working i-spec
 - Implement Arithmetic operations (MUL, DIV etc)
 x Make mix file an argument
 - Write a numerical algorithm in Mix
 - j-registers
+- working jump
+- overflow bit
+- comparison bit
 - Either on parse failure
 - rich parse error messages
 - memory / register cell diagram

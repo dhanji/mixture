@@ -78,7 +78,7 @@ set mix (Just reg) cell = case reg of
     "J"      -> mix { rJ = cell }
     ('I':i)  -> let ix = read i in mix { rI = replace ix }
   where
-    replace ix = [if j == ix then cell else v | j <- [1..cellWidth], v <- rI mix]
+    replace ix = [if j == ix then cell else v | (j, v) <- zip [1..cellWidth] (rI mix)]
 
 
 -- Returns the value of the register identified by the given String
