@@ -7,7 +7,6 @@ import Data.String.Interpolate
 import Text.Regex.Posix ((=~))
 
 import qualified Data.List.Split as Split
-import qualified Data.Text as Text
 import qualified Data.Char as Char (isSpace)
 
 import Mix.Data
