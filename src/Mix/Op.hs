@@ -3,6 +3,7 @@ module Mix.Op
   , setRegister
   , storeRegister
   , storeZero
+  , addAccumulator
   ) where
 
 import Mix.Data
@@ -14,7 +15,7 @@ import Data.Array
 setRegister :: Mix -> Instruction -> Mix
 setRegister mix Instruction{address, target, sign} = set mix target Cell {
     sign  = sign
-  , bytes = toBytes address
+  , bytes = bytes (toCell address)
 }
 
 
@@ -22,14 +23,16 @@ setRegister mix Instruction{address, target, sign} = set mix target Cell {
 loadRegister :: Mix -> Instruction -> Mix
 loadRegister mix Instruction{address, target, fSpec} = set mix target value
   where
-    value = rightCopy fSpec (memory mix ! address) newCell
+    value = select fSpec (memory mix ! address)
 
 
 -- ADD: Loads from memory and adds to the A register.
-add :: Mix -> Instruction -> Mix
-add mix Instruction{address, target, fSpec} = set mix target value
+addAccumulator :: Mix -> Instruction -> Mix
+addAccumulator mix Instruction{address, target, fSpec} = set mix target result
   where
-    value = rightCopy fSpec (memory mix ! address) newCell
+    register = get mix target
+    value    = select fSpec (memory mix ! address)
+    result   = addCells register value
 
 
 -- ST{A,X}

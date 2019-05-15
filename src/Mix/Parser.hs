@@ -8,6 +8,7 @@ import Text.Regex.Posix ((=~))
 
 import qualified Data.List.Split as Split
 import qualified Data.Char as Char (isSpace)
+import qualified Data.Text as Text
 
 import Mix.Data
 import Mix.Data.Display
