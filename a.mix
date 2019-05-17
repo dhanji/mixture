@@ -11,5 +11,5 @@
   SETA    0
   LDA     2000
 
-  * test instructon (should set A to 2345 x 2)
-  ADD     2000
+  * test instructon (should set A to 2345 - 4)
+  SUB     2000(4:4)

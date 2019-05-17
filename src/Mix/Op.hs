@@ -4,6 +4,7 @@ module Mix.Op
   , storeRegister
   , storeZero
   , addAccumulator
+  , subtractAccumulator
   ) where
 
 import Mix.Data
@@ -33,6 +34,15 @@ addAccumulator mix Instruction{address, target, fSpec} = set mix target result
     register = get mix target
     value    = select fSpec (memory mix ! address)
     result   = addCells register value
+
+
+-- SUB: Loads from memory and subtracts from the A register.
+subtractAccumulator :: Mix -> Instruction -> Mix
+subtractAccumulator mix Instruction{address, target, fSpec} = set mix target result
+  where
+    register = get mix target
+    value    = select fSpec (memory mix ! address)
+    result   = addCells register (value{sign=Minus})
 
 
 -- ST{A,X}

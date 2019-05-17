@@ -35,6 +35,7 @@ parseOp ('S':'T':cs)      = (Store, Just cs)
 parseOp ('I':'N':'C':cs)  = (Increment, Just cs)
 parseOp ('S':'E':'T':cs)  = (Set, Just cs)
 parseOp ('A':'D':'D':cs)  = (Add, Just cs)
+parseOp ('S':'U':'B':cs)  = (Sub, Just cs)
 parseOp x                 = fail ("Parse error: " ++ x) (Zero, Nothing) -- TODO make this an Either
 
 

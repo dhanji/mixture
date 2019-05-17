@@ -42,4 +42,5 @@ executeOp mix instruction = case op instruction of
     Store   -> storeRegister mix instruction
     Zero    -> storeZero mix instruction
     Add     -> addAccumulator mix instruction
+    Sub     -> subtractAccumulator mix instruction
     _       -> mix -- TODO make this an Either
