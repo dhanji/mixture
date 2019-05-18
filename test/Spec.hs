@@ -16,7 +16,7 @@ main = defaultMain $ testGroup "\nMix Test Suite" (properties : specs)
 asSpec :: Fixture.Specification -> TestTree
 asSpec (specifies, assembly, expected) = specify $ it specifies (accumulator `shouldBe` expected)
   where
-    specify     = unsafePerformIO . testSpec ""
+    specify     = unsafePerformIO . testSpec ".mix."
     accumulator = toInt $ rA (Mix.executeProgram newMix assembly)
 
 
