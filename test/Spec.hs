@@ -16,7 +16,7 @@ main = defaultMain $ testGroup "\nMix Test Suite" (properties : specs)
 asSpec :: Fixture.Specification -> TestTree
 asSpec (specifies, assembly, expected) = specify $ it specifies (accumulator `shouldBe` expected)
   where
-    specify     = unsafePerformIO . testSpec ".mix."
+    specify     = unsafePerformIO . testSpec ".asm."
     accumulator = toInt $ rA (Mix.executeProgram newMix assembly)
 
 
@@ -34,6 +34,8 @@ properties = testGroup "QuickCheck: Data.Cell" [
 -- HSpec tests (detailed in Fixture)
 specs :: [TestTree]
 specs = map asSpec [
-    Fixture.addFieldParts
+    Fixture.addSingleFieldPart
+  , Fixture.addDoublesCell
+  , Fixture.addDoublesCellNoFieldSpec
   , Fixture.subFieldParts
   ]

@@ -6,7 +6,7 @@ type Specification = (String, String, Int)
 
 
 subFieldParts :: Specification
-subFieldParts = ("in '2345' subtracts 2000(4:4) from 2000(0:1)", [i|
+subFieldParts = ("with '2345' subtracts (4:4)", [i|
   SETA    2345
   STA     2000
 
@@ -15,11 +15,31 @@ subFieldParts = ("in '2345' subtracts 2000(4:4) from 2000(0:1)", [i|
 |], 2341)
 
 
-addFieldParts :: Specification
-addFieldParts = ("in '2345' adds 2000(4:4) to 2000(0:1)", [i|
+addSingleFieldPart :: Specification
+addSingleFieldPart = ("with '2345' adds (4:4)", [i|
   SETA    2345
   STA     2000
 
   * test instructon (should set A to 2345 + 4)
   ADD     2000(4:4)
 |], 2349)
+
+
+addDoublesCell :: Specification
+addDoublesCell = ("with '2345' adds (0:5), i.e. 2x", [i|
+  SETA    2345
+  STA     2000
+
+  * test instructon (should set A to 2345 x2)
+  ADD     2000(0:5)
+|], 2345 * 2)
+
+
+addDoublesCellNoFieldSpec :: Specification
+addDoublesCellNoFieldSpec = ("with '2345' adds itself, i.e. 2x", [i|
+  SETA    2345
+  STA     2000
+
+  * test instructon (should set A to 2345 x2)
+  ADD     2000
+|], 2345 * 2)
