@@ -1,5 +1,6 @@
 module Mix
     ( executeMix
+    , executeProgram
     ) where
 
 import System.IO
@@ -16,14 +17,14 @@ executeMix mixFile = do
     handle  <- openFile mixFile ReadMode
     text    <- hGetContents handle
     let result = executeProgram newMix text
-    putStrLn result
+    print result
 
     hClose handle
 
 
 -- Runs a MIX program and returns the MIX computer's final state.
-executeProgram :: Mix -> String -> String
-executeProgram mix code = show $ executeLine (mix{ source = lines code }) (lines code)
+executeProgram :: Mix -> String -> Mix
+executeProgram mix code = executeLine (mix{ source = lines code }) (lines code)
 
 
 -- executes each line of the mix program, passing the output as a new computer to the next
