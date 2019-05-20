@@ -31,7 +31,7 @@ properties = testGroup "QuickCheck: Data.Cell" [
       \(n, m) -> assertComputesWith (+) n m
 
   , testProperty "computeWith (-) results in integer difference" $
-      \(n, m) -> assertComputes (-) n m
+      \(n, m) -> assertComputesWith (-) n m
 
   , testProperty "computeWith (*) results in integer product" $
       \(n, m) -> assertComputesWith (*) n m
@@ -55,5 +55,7 @@ specs = map (asSpec "ADD") [
     Fixture.subtractFieldParts
   ]
   ++ map (asSpec "MUL") [
-    Fixture.mulDoublesCell
+    Fixture.mulByOne
+  , Fixture.mulByZeroes
+  , Fixture.mulDoublesCell
   ]

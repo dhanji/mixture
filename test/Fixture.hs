@@ -45,6 +45,22 @@ mulDoublesCell = ("with '2345' multiplies (2:2), i.e. 2x", [i|
 |], 2345 * 2)
 
 
+mulByOne :: Specification
+mulByOne = ("with '1000' multiplies (2:2), i.e. 1x", [i|
+  SETA    1000
+  STA     2000
+  MUL     2000(2:2)
+|], 1000)
+
+
+mulByZeroes :: Specification
+mulByZeroes = ("with '1000' multiplies (3:4), i.e. 0x", [i|
+  SETA    1000
+  STA     2000
+  MUL     2000(3:4)
+|], 0)
+
+
 addDoublesCellNoFieldSpec :: Specification
 addDoublesCellNoFieldSpec = ("with '2345' adds itself, i.e. 2x", [i|
   SETA    2345
