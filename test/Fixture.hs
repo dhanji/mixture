@@ -61,6 +61,22 @@ mulByZeroes = ("with '1000' multiplies (3:4), i.e. 0x", [i|
 |], 0)
 
 
+divByTwo :: Specification
+divByTwo = ("with '20000' divides (1:1), i.e. /2", [i|
+  SETA    20000
+  STA     2000
+  DIV     2000(1:1)
+|], 10000)
+
+
+divBySelf :: Specification
+divBySelf = ("with '20000' divides (0:5), i.e. ==1", [i|
+  SETA    20000
+  STA     2000
+  DIV     2000
+|], 1)
+
+
 addDoublesCellNoFieldSpec :: Specification
 addDoublesCellNoFieldSpec = ("with '2345' adds itself, i.e. 2x", [i|
   SETA    2345

@@ -59,3 +59,7 @@ specs = map (asSpec "ADD") [
   , Fixture.mulByZeroes
   , Fixture.mulDoublesCell
   ]
+  ++ map (asSpec "DIV") [
+    Fixture.divByTwo
+  , Fixture.divBySelf
+  ]
