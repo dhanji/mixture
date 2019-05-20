@@ -28,18 +28,20 @@ properties = testGroup "QuickCheck: Data.Cell" [
       \n -> (toInt . toCell) n == (n :: Int)
 
   , testProperty "computeWith (+) results in integer sum" $
-      \(n, m) -> toInt (computeWith (+) (toCell n) (toCell m)) == (n :: Int) + (m :: Int)
+      \(n, m) -> assertComputesWith (+) n m
 
   , testProperty "computeWith (-) results in integer difference" $
-      \(n, m) -> toInt (computeWith (-) (toCell n) (toCell m)) == (n :: Int) - (m :: Int)
+      \(n, m) -> assertComputes (-) n m
 
   , testProperty "computeWith (*) results in integer product" $
-      \(n, m) -> toInt (computeWith (*) (toCell n) (toCell m)) == (n :: Int) * (m :: Int)
+      \(n, m) -> assertComputesWith (*) n m
 
   , testProperty "computeWith (div) results in integer division" $
       \(n, m) -> m /= 0
-              ==> toInt (computeWith div (toCell n) (toCell m)) == (n :: Int) `div` (m :: Int)
+              ==> assertComputesWith div n m
   ]
+  where
+    assertComputesWith fn n m = toInt (computeWith fn (toCell n) (toCell m)) == n `fn` m
 
 
 -- HSpec tests (detailed in Fixture)
