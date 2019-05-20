@@ -5,6 +5,8 @@ module Mix.Op
   , storeZero
   , addAccumulator
   , subtractAccumulator
+  , multiplyAccumulator
+  , divideAccumulator
   ) where
 
 import Mix.Data
@@ -33,7 +35,16 @@ addAccumulator mix Instruction{address, target, fSpec} = set mix target result
   where
     register = get mix target
     value    = select fSpec (memory mix ! address)
-    result   = addCells register value
+    result   = computeWith (+) register value
+
+
+-- MUL: Loads from memory and multiplies with the A register.
+multiplyAccumulator :: Mix -> Instruction -> Mix
+multiplyAccumulator mix Instruction{address, target, fSpec} = set mix target result
+  where
+    register = get mix target
+    value    = select fSpec (memory mix ! address)
+    result   = computeWith (*) register value
 
 
 -- SUB: Loads from memory and subtracts from the A register.
@@ -42,7 +53,16 @@ subtractAccumulator mix Instruction{address, target, fSpec} = set mix target res
   where
     register = get mix target
     value    = select fSpec (memory mix ! address)
-    result   = addCells register (value{sign=Minus})
+    result   = computeWith (-) register value
+
+
+-- DIV: Loads from memory and divides the A register.
+divideAccumulator :: Mix -> Instruction -> Mix
+divideAccumulator mix Instruction{address, target, fSpec} = set mix target result
+  where
+    register = get mix target
+    value    = select fSpec (memory mix ! address)
+    result   = computeWith div register value
 
 
 -- ST{A,X}

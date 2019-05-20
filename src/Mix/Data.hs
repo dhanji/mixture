@@ -41,7 +41,7 @@ data Mix = Mix {
 }
 
 
-data Op = Load | Store | Zero | Increment | Set | Add | Sub deriving (Eq)
+data Op = Load | Store | Zero | Increment | Set | Add | Sub | Mul | Div deriving (Eq)
 
 
 data Instruction = Comment | Blank | Instruction {

@@ -12,4 +12,4 @@
   LDA     2000
 
   * test instructon (should set A to 2345 - 4)
-  SUB     2000(4:4)
+  MUL     2000(2:2)

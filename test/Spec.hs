@@ -2,8 +2,9 @@ import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.Hspec
 import Mix.Data.Cell
-import qualified Mix
 import Mix.Data (rA)
+
+import qualified Mix
 import qualified Fixture
 
 import GHC.IO (unsafePerformIO)
@@ -26,8 +27,18 @@ properties = testGroup "QuickCheck: Data.Cell" [
     testProperty "Roundtrip: Int -> toCell -> toInt" $
       \n -> (toInt . toCell) n == (n :: Int)
 
-  , testProperty "addCells result equals integer sum" $
-      \(n, m) -> toInt (addCells (toCell n) (toCell m)) == (n :: Int) + (m :: Int)
+  , testProperty "computeWith (+) results in integer sum" $
+      \(n, m) -> toInt (computeWith (+) (toCell n) (toCell m)) == (n :: Int) + (m :: Int)
+
+  , testProperty "computeWith (-) results in integer difference" $
+      \(n, m) -> toInt (computeWith (-) (toCell n) (toCell m)) == (n :: Int) - (m :: Int)
+
+  , testProperty "computeWith (*) results in integer product" $
+      \(n, m) -> toInt (computeWith (*) (toCell n) (toCell m)) == (n :: Int) * (m :: Int)
+
+  , testProperty "computeWith (div) results in integer division" $
+      \(n, m) -> m /= 0
+              ==> toInt (computeWith div (toCell n) (toCell m)) == (n :: Int) `div` (m :: Int)
   ]
 
 
@@ -40,4 +51,7 @@ specs = map (asSpec "ADD") [
   ]
   ++ map (asSpec "SUB") [
     Fixture.subtractFieldParts
+  ]
+  ++ map (asSpec "MUL") [
+    Fixture.mulDoublesCell
   ]

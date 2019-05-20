@@ -42,8 +42,8 @@ select (FieldSpec low hi) Cell{sign,bytes} = Cell {
         | otherwise = take (hi - from) . drop from
 
 
-addCells :: Cell -> Cell -> Cell
-addCells left right = toCell $ toInt left + toInt right
+computeWith :: (Int -> Int -> Int) -> Cell -> Cell -> Cell
+computeWith fn left right = toCell $ toInt left `fn` toInt right
 
 
 -- Returns a slice of the given bitstring according to the FieldSpec
@@ -63,7 +63,7 @@ leftCopy (FieldSpec low hi) Cell{sign=ssign,bytes=sbytes} Cell{sign=tsign,bytes=
     keep n bs = drop (length bs - n) bs
 
 
--- Converts an Int to a cellWidth-word Byte string.
+-- Converts an Int to a cellWidth-Byte string.
 toCell :: Int -> Cell
 toCell i
     | i == 0    = Cell Plus (replicate cellWidth 0)

@@ -35,6 +35,16 @@ addDoublesCell = ("with '2345' adds (0:5), i.e. 2x", [i|
 |], 2345 * 2)
 
 
+mulDoublesCell :: Specification
+mulDoublesCell = ("with '2345' multiplies (2:2), i.e. 2x", [i|
+  SETA    2345
+  STA     2000
+
+  * test instructon (should set A to 2345 x2)
+  MUL     2000(2:2)
+|], 2345 * 2)
+
+
 addDoublesCellNoFieldSpec :: Specification
 addDoublesCellNoFieldSpec = ("with '2345' adds itself, i.e. 2x", [i|
   SETA    2345

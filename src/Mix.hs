@@ -44,4 +44,6 @@ executeOp mix instruction = case op instruction of
     Zero    -> storeZero mix instruction
     Add     -> addAccumulator mix instruction
     Sub     -> subtractAccumulator mix instruction
+    Mul     -> multiplyAccumulator mix instruction
+    Div     -> divideAccumulator mix instruction
     _       -> mix -- TODO make this an Either
