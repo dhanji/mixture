@@ -61,6 +61,14 @@ mulByZeroes = ("with '1000' multiplies (3:4), i.e. 0x", [i|
 |], 0)
 
 
+mulByNegativeOne :: Specification
+mulByNegativeOne = ("with '-1000' multiplies (0:2) flips sign", [i|
+  SETA    -1000
+  STA     2000
+  MUL     2000(0:2)
+|], 1000)
+
+
 divByTwo :: Specification
 divByTwo = ("with '20000' divides (1:1), i.e. /2", [i|
   SETA    20000
@@ -75,6 +83,14 @@ divBySelf = ("with '20000' divides (0:5), i.e. ==1", [i|
   STA     2000
   DIV     2000
 |], 1)
+
+
+divByNegativeOne :: Specification
+divByNegativeOne = ("with '-16789' divides (0:1) flips sign", [i|
+  SETA    -16789
+  STA     2000
+  DIV     2000(0:1)
+|], 16789)
 
 
 addDoublesCellNoFieldSpec :: Specification
