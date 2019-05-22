@@ -15,7 +15,8 @@ main = defaultMain $ testGroup "\nMix Test Suite" (properties : specs)
 
 
 asSpec :: String -> Fixture.Specification -> TestTree
-asSpec group (specifies, asm, expected) = specify $ it specifies (accumulator `shouldBe` expected)
+asSpec group (specifies, asm, expected) =
+    specify $ it specifies (accumulator `shouldBe` expected)
   where
     specify     = unsafePerformIO . testSpec group
     accumulator = toInt $ rA (Mix.executeProgram newMix asm)
@@ -25,7 +26,7 @@ asSpec group (specifies, asm, expected) = specify $ it specifies (accumulator `s
 properties :: TestTree
 properties = testGroup "QuickCheck: Data.Cell" [
     testProperty "Roundtrip: Int -> toCell -> toInt" $
-      \n -> (toInt . toCell) n == (n :: Int)
+      \n -> (toInt . toCell) n == n
 
   , testProperty "computeWith (+) results in integer sum" $
       \(n, m) -> assertComputesWith (+) n m
