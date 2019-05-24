@@ -42,6 +42,8 @@ select (FieldSpec low hi) Cell{sign,bytes} = Cell {
         | otherwise = take (hi - from) . drop from
 
 
+-- Performs a computation on two cells, applying the given function
+-- that operates on Ints.
 computeWith :: (Int -> Int -> Int) -> Cell -> Cell -> Cell
 computeWith fn left right = toCell $ toInt left `fn` toInt right
 
@@ -68,7 +70,7 @@ toCell :: Int -> Cell
 toCell i
     | i == 0    = Cell Plus (replicate cellWidth 0)
     | i > 0     = Cell Plus (bytize i)
-    | otherwise = Cell Minus (bytize (abs i))
+    | otherwise = Cell Minus (bytize $ abs i)
   where
     bytize i = [(i `mod` 10^n) `div` 10^(n - 1) | n <- [cellWidth,cellWidth - 1..1]]
 
