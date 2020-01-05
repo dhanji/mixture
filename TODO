@@ -4,7 +4,7 @@ TODO
 x f-spec read & copy
 x i-registers
 - Working i-spec
-- Implement Arithmetic operations (MUL, DIV etc)
+x Implement Arithmetic operations (MUL, DIV etc)
 x Make mix file an argument
 - Write a numerical algorithm in Mix
 - j-registers
